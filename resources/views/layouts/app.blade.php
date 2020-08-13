@@ -10,49 +10,12 @@
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
         <!--google maps-->
-        <script defer src="https://maps.googleapis.com/maps/api/js?key={{env('GOOGLE_MAPS_API_KEY')}}&callback=initMap"></script>
-        <style>
-        	.sidebar{
-				background-color: white;
-				margin-left: 10px;
-				overflow-x: visible;
-				padding-top: 20px;
-				height: 100%;
-				width:20%;
-				position: fixed;
-				z-index: 1;
-        	}
-        	.sidenav {
-			  width: 250px;
-			  height: 100%;
-			  background-color: white;
-			  padding-top: 20px;
-			  padding-left: 10px;
-			  padding-right: 10px;
-			}
-        	table {
-        	  margin: 0;
-        	  padding:0;
-			  height: 100%;
-			  width: 100%;
-			  table-layout: fixed;
-			}
-        	#map{
-        		height: 100%;
-        		width:100%;
-        		margin: 0;
-        		padding: 0;
-        		overflow: visible;
-        	}
-        	html,body {
-		      height: 100%;
-		      width:100%;
-		      margin: 0;
-		      padding: 0;
-		    }
-        	
-
-        </style>
+        <script defer src="https://maps.googleapis.com/maps/api/js?key={{env('GOOGLE_MAPS_API_KEY')}}&callback=initMap&libraries=places"></script>
+        <!--google map functions -->
+        <script type="text/javascript" src="{{ URL::asset('js/googleMapFunctions.js') }}"></script>
+        <!--css file-->
+        <link rel="stylesheet" href="{{ URL::asset('css/app.css') }}" />
+        
         </head>
     <body>
 
@@ -69,9 +32,16 @@
 						  <div class="form-group">
 						    <input type="text" class="form-control" id="place2" name ="place2" placeholder="Enter destination">
 						  </div>
+                          <div class="form-group" id="mode-selector">
+                              <input type="radio" name="type" id="modeWalking" checked="checked">Walking
+                              <input type="radio" name="type" id="modeTransit">Transit
+                              <input type="radio" name="type" id="modeDriving">Driving
+                          </div>
 						  
-						  <button type="submit" class="btn btn-primary">Go</button>
+						  <!-- <button type="submit" class="btn btn-primary">Go</button> -->
+
 						</form>
+                        <div id="instructions"></div>
 						@show
     				</div>
     			</td>
