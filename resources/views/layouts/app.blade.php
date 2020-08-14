@@ -30,62 +30,8 @@
     		<tr>
     			<td class="sidenav">
     				<div id="sidebar">
-    					@section('sidebar')
-    					<h2>The Pandemic Pedestrian</h2>
-	                    <form>
-						  <div class="form-group">
-						    <input type="text" class="form-control" id="place1" name ="place1" placeholder="Enter source">
-						  </div>
-						  <div class="form-group">
-						    <input type="text" class="form-control" id="place2" name ="place2" placeholder="Enter destination">
-						  </div>
-                          <div class="form-group" id="mode-selector">
-                              <input type="radio" name="type" id="modeWalking" checked="checked">Walking
-                              <input type="radio" name="type" id="modeTransit">Transit
-                              <input type="radio" name="type" id="modeDriving">Driving
-                          </div>
-						  <div class="form-group" id="day-time-selector">
-                              <select name="day-selector" id="day-selector">
-                                  <option value="0">Sun</option>
-                                  <option value="1">Mon</option>
-                                  <option value="2">Tues</option>
-                                  <option value="3">Wed</option>
-                                  <option value="4">Thurs</option>
-                                  <option value="5">Fri</option>
-                                  <option value="6">Sat</option>
-                              </select>
-                              <select name="time-selector" id="time-selector">
-                                  <option value="0">00-01</option>
-                                  <option value="1">01-02</option>
-                                  <option value="2">02-03</option>
-                                  <option value="3">03-04</option>
-                                  <option value="4">04-05</option>
-                                  <option value="5">05-06</option>
-                                  <option value="6">06-07</option>
-                                  <option value="7">07-08</option>
-                                  <option value="8">08-09</option>
-                                  <option value="9">09-10</option>
-                                  <option value="10">10-11</option>
-                                  <option value="11">11-12</option>
-                                  <option value="12">12-13</option>
-                                  <option value="13">13-14</option>
-                                  <option value="14">14-15</option>
-                                  <option value="15">15-16</option>
-                                  <option value="16">16-17</option>
-                                  <option value="17">17-18</option>
-                                  <option value="18">18-19</option>
-                                  <option value="19">19-20</option>
-                                  <option value="20">20-21</option>
-                                  <option value="21">21-22</option>
-                                  <option value="22">22-23</option>
-                                  <option value="23">23-24</option>
-                              </select>
-                          </div>
-						  <!-- <button type="submit" class="btn btn-primary">Go</button> -->
-
-						</form>
-                        <div id="instructions"></div>
-						@show
+    					@yield('sidebar')
+    					
     				</div>
     			</td>
     			<td>
