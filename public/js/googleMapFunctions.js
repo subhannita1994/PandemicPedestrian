@@ -213,6 +213,7 @@ function fire_popular_times(SW_lat = 45.481514, SW_lng = -73.645368, NE_lat = 45
 		                       		var lat = objects_array[i].coordinates.lat;
 		                       		var lng = objects_array[i].coordinates.lng;
 		                       		var busy = objects_array[i].populartimes[day].data[time];
+                              
 		                       		crowd_data.push({
 		                       			center : {lat: lat, lng:lng},
 		                       			busy : busy
@@ -220,6 +221,8 @@ function fire_popular_times(SW_lat = 45.481514, SW_lng = -73.645368, NE_lat = 45
 		                       }
 
 		                       draw(crowd_data);
+                           if(!map.getBounds().contains(new google.maps.LatLng(SW_lat,SW_lng)) || !map.getBounds().contains(new google.maps.LatLng(NE_lat, NE_lng)) )
+                                displayInformation("",true);
 
 		                  }
 		                  else {
@@ -235,7 +238,7 @@ function fire_popular_times(SW_lat = 45.481514, SW_lng = -73.645368, NE_lat = 45
   
 **/
 function draw(crowd_data){
-	console.log(crowd_data);
+	// console.log(crowd_data);
 	try{
 		removeAllCircles();
 	}catch(err){

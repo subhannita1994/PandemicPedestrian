@@ -1,6 +1,11 @@
 @import url(https://fonts.googleapis.com/css?family=Nunito);
 #information{
+  margin-top: 10px;
+  margin-bottom: 10px;
   color:#FF0000;
+}
+#information button{
+  border: 2px solid #FF0000;
 }
 .sidebar{
 	height: 100%;
