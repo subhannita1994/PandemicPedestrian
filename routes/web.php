@@ -11,6 +11,16 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::get('/', 'MainController@index');
+
+Route::get('/getSearchFields', 'MainController@getSearchFieldIDs');
+
+Route::post('/updateSearchField', 'MainController@updateSearchField');
+
+Route::post('/updateDayTime', 'MainController@updateDayTime');
+
+Route::post('/updateTravelMode', 'MainController@updateTravelMode');
