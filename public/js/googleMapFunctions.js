@@ -1,12 +1,13 @@
 let map;
 let circles=[];
+let directionsService;
+let directionsRenderer;
 
 function initMap() {
 
   var montreal = {lat: 45.4901945, lng: -73.6365278};
   map = new google.maps.Map(document.getElementById('map'), {zoom: 15, center: montreal});
-  
-  
+
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -24,12 +25,32 @@ function initMap() {
       handleLocationError(false, map.getCenter());
     }
 
-    map.addListener('bounds_changed', function(){
-      if(!getInformation().includes('crowd'))
-        displayInformation("", true);
-    })
+    //give option to fetch crowd data when map bounds are changed
+    addBoundsListener();
 
-    new AutocompleteDirectionsHandler(map);
+    //directions service and renderer
+    directionsService = new google.maps.DirectionsService;
+    directionsRenderer = new google.maps.DirectionsRenderer;
+    directionsRenderer.setMap(map);
+    directionsRenderer.setPanel(document.getElementById('instructions'));
+
+
+    //autocomplete
+    var autoCompletes = [];
+    jQuery.ajax({
+        type: "GET",
+        url: '/getSearchFields',
+        success: function (placeIDs) {
+                  for(index in placeIDs){
+                    var element = document.getElementById(placeIDs[index]);
+                    var autoComplete = new google.maps.places.Autocomplete(element);
+                    autoComplete.setFields(['place_id', 'geometry']);
+                    autoComplete.bindTo('bounds', map);
+                    addPlacesChangedListener(autoComplete, placeIDs[index]);
+                    autoCompletes.push(autoComplete);
+                  }
+                }
+    });
 
 
 }
@@ -42,154 +63,95 @@ function handleLocationError(browserHasGeolocation, pos) {
 
 }
 
-/**
- * @constructor
- */
-function AutocompleteDirectionsHandler(map) {
-  this.map = map;
-  this.originPlaceId = null;
-  this.originLocation = null;
-  this.destinationPlaceId = null;
-  this.destinationLocation = null;
-  this.travelMode = 'WALKING';
-  var date = new Date();
-  this.day = date.getDay();
-  this.time = date.getHours();
-  this.directionsService = new google.maps.DirectionsService;
-  this.directionsRenderer = new google.maps.DirectionsRenderer;
-  this.directionsRenderer.setMap(map);
-  this.directionsRenderer.setPanel(document.getElementById('instructions'));
-
-  var originInput = document.getElementById('place1');
-  var destinationInput = document.getElementById('place2');
-  var modeSelector = document.getElementById('travelMode');
-  var dayInput = document.getElementById('day-selector');
-  var timeInput = document.getElementById('time-selector');
-  dayInput.value = this.day;
-  timeInput.value = this.time;
-
-  var originAutocomplete = new google.maps.places.Autocomplete(originInput);
-  originAutocomplete.setFields(['place_id', 'geometry']);
-
-  var destinationAutocomplete = new google.maps.places.Autocomplete(destinationInput);
-  destinationAutocomplete.setFields(['place_id', 'geometry']);
-
-  this.setupModeListener('modeWalking', 'WALKING');
-  this.setupModeListener('modeTransit', 'TRANSIT');
-  this.setupModeListener('modeDriving', 'DRIVING');
-
-  this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
-  this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
-
-  this.setupDayTimeChangedListener('day-selector', 'DAY');
-  this.setupDayTimeChangedListener('time-selector', 'TIME');
-
+function addBoundsListener(){
+  map.addListener('bounds_changed', function(){
+    if(!getInformation())
+      displayInformation("", true);
+  });
 }
 
 /**
-
 **/
-AutocompleteDirectionsHandler.prototype.setupModeListener = function(
-    id, mode) {
-  var radioButton = document.getElementById(id);
-  var me = this;
-
-  radioButton.addEventListener('click', function() {
-    me.travelMode = mode;
-    if(me.originPlaceId && me.destinationPlaceId)
-      me.route();
-  });
-};
-
+function displayInformation(text="", fetchButton=false){
+  var information = document.getElementById('information');
+  information.innerHTML = text;
+  if(fetchButton){
+    var button = document.createElement('button');
+    button.innerHTML = "Fetch Crowd Data";
+    button.setAttribute('type', 'button');
+    button.onclick = function(){
+      var NE = map.getBounds().getNorthEast();
+      var SW = map.getBounds().getSouthWest();
+      fire_popular_times(SW.lat(), SW.lng(), NE.lat(), NE.lng());
+    };
+    information.appendChild(button);
+  }
+}
 
 /**
-  
 **/
-AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(
-    autocomplete, mode) {
-  var me = this;
-  autocomplete.bindTo('bounds', this.map);
+function getInformation(){
+  var information = document.getElementById('information');
+  return information.innerHTML;
+}
 
-  autocomplete.addListener('place_changed', function() {
-    var place = autocomplete.getPlace();
-    
-
+function addPlacesChangedListener(autoComplete, searchFieldID){
+  autoComplete.addListener('place_changed', function() {
+    var place = autoComplete.getPlace();
     if (!place.place_id) {
       window.alert('Please select an option from the dropdown list.');
       return;
     }
-    if (mode === 'ORIG') {
-      me.originPlaceId = place.place_id;
-      me.originLocation = place.geometry.location;
-    } else {
-      me.destinationPlaceId = place.place_id;
-      me.destinationLocation = place.geometry.location;
-    }
-    if(me.originPlaceId && me.destinationPlaceId)
-    	me.route();
+    jQuery.ajax({ 
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      type: "POST",
+      url: '/updateSearchField',
+      data: {
+        documentID: searchFieldID, 
+        placeID: place.place_id,
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+        name: document.getElementById(searchFieldID).value
+      },
+      success: function(response){
+        if('message' in response)
+          console.log(response);
+        else{
+          var values = Object.values(response);
+          route(values[0], values[1], values[2]);
+        }
+
+      },
+      error: function (req, err) {
+        console.log("Updating search field failed:"+err);
+      }
+    });
   });
-};
-
-
-/**
-  
-**/
-AutocompleteDirectionsHandler.prototype.setupDayTimeChangedListener = function(id, selector){
-
-	var me = this;
-	var select = document.getElementById(id);
-	select.addEventListener('change', function(){
-		if(selector==='DAY'){
-			me.day = select.value;
-		}else if(selector==='TIME'){
-			me.time = select.value;
-		}
-		me.route();
-	});
 }
 
 
-/**
-  
-**/
-AutocompleteDirectionsHandler.prototype.route = function() {
-
-  var me = this;
-  if (!this.originPlaceId || !this.destinationPlaceId) {
-  	var pos = this.map.getCenter();
-    fire_popular_times(pos.lat()-0.01, pos.lng()-0.01, pos.lat()+0.01, pos.lng()+0.01);
-    return;
-  }
-
-  this.directionsService.route(
+function route(originPlaceId, destinationPlaceId, travelMode){
+  directionsService.route(
       {
-        origin: {'placeId': this.originPlaceId},
-        destination: {'placeId': this.destinationPlaceId},
-        travelMode: this.travelMode
+        origin: {'placeId': originPlaceId},
+        destination: {'placeId': destinationPlaceId},
+        travelMode: travelMode
       },
       (response, status) => {
         if (status === 'OK') {
-          me.directionsRenderer.setDirections(response);
-          if(me.originLocation!=null && me.destinationLocation!=null){
-          	  if(me.originLocation.lat() < me.destinationLocation.lat())
-          	    fire_popular_times(this.originLocation.lat(), this.originLocation.lng(), this.destinationLocation.lat(), this.destinationLocation.lng());
-	          else
-	          	fire_popular_times(this.destinationLocation.lat(), this.destinationLocation.lng(), this.originLocation.lat(), this.originLocation.lng());
-          }else{
-          	  var pos = this.map.getCenter();
-          	  fire_popular_times(pos.lat()-0.01, pos.lng()-0.01, pos.lat()+0.01, pos.lng()+0.01);
-          }
-          
+          directionsRenderer.setDirections(response);
+          //fire_popular_times 
         } else {
           window.alert('Directions request failed due to ' + status);
         }
       });
-};
+}
 
 
-/**
-  
-**/
+
+
 function fire_popular_times(SW_lat = 45.481514, SW_lng = -73.645368, NE_lat = 45.500919, NE_lng = -73.611723){
 
 	console.log("Finding popular times between ("+SW_lat+","+SW_lng+") and ("+NE_lat+","+NE_lng+")");
@@ -273,29 +235,6 @@ function removeAllCircles(){
 	circles = [];
 }
 
-/**
-**/
-function displayInformation(text="", fetchButton=false){
-  var information = document.getElementById('information');
-  information.innerHTML = text;
-  if(fetchButton){
-    var button = document.createElement('button');
-    button.innerHTML = "Fetch Crowd Data";
-    button.setAttribute('type', 'button');
-    button.onclick = function(){
-      var NE = map.getBounds().getNorthEast();
-      var SW = map.getBounds().getSouthWest();
-      fire_popular_times(SW.lat(), SW.lng(), NE.lat(), NE.lng());
-    };
-    information.appendChild(button);
-  }
-}
 
-/**
-**/
-function getInformation(){
-  var information = document.getElementById('information');
-  return information.innerHTML;
-}
 
 
