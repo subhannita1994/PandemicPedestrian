@@ -52,7 +52,7 @@
                     },
 
                     success: function (response) {
-                      //fire_popular_times
+                      fire_popular_times(map.getBounds().getSouthWest().lat(), map.getBounds().getSouthWest().lng(), map.getBounds().getNorthEast().lat(), map.getBounds().getNorthEast().lng());
                     },
                     error: function(err){
                       console.log("Failed to  update dayTime--"+err);

@@ -151,46 +151,7 @@ function route(originPlaceId, destinationPlaceId, travelMode){
 
 
 
-/**
 
-**/
-// AutocompleteDirectionsHandler.prototype.setupModeListener = function(
-//     id, mode) {
-//   var radioButton = document.getElementById(id);
-//   var me = this;
-
-//   radioButton.addEventListener('click', function() {
-//     me.travelMode = mode;
-//     if(me.originPlaceId && me.destinationPlaceId)
-//       me.route();
-//   });
-// };
-
-
-
-
-// /**
-  
-// **/
-// AutocompleteDirectionsHandler.prototype.setupDayTimeChangedListener = function(id, selector){
-
-// 	var me = this;
-// 	var select = document.getElementById(id);
-// 	select.addEventListener('change', function(){
-// 		if(selector==='DAY'){
-// 			me.day = select.value;
-// 		}else if(selector==='TIME'){
-// 			me.time = select.value;
-// 		}
-// 		me.route();
-// 	});
-// }
-
-
-
-/**
-  
-**/
 function fire_popular_times(SW_lat = 45.481514, SW_lng = -73.645368, NE_lat = 45.500919, NE_lng = -73.611723){
 
 	console.log("Finding popular times between ("+SW_lat+","+SW_lng+") and ("+NE_lat+","+NE_lng+")");
