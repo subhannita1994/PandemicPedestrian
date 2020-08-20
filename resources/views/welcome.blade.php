@@ -71,7 +71,7 @@
                   dataType:'json',
                   data:{'travelMode':item.value},
                   success: function(response){
-                    //fire_popular_times if bounds have changed or maybe let it be
+                    //fire_popular_times if bounds have changed or maybe let it be because bounds have changed anyway
                     if('message' in response)
                       console.log(response);
                     else{

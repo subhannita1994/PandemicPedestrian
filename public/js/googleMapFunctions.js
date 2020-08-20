@@ -142,7 +142,8 @@ function route(originPlaceId, destinationPlaceId, travelMode){
       (response, status) => {
         if (status === 'OK') {
           directionsRenderer.setDirections(response);
-          //fire_popular_times 
+          //fire_popular_times if you wanna get popular times for your route everytime
+          //but this is anyway fired because boudnds are changed
         } else {
           window.alert('Directions request failed due to ' + status);
         }
