@@ -8,24 +8,24 @@ You can set your source and destination addresses, select a day and time and see
 <img src="https://github.com/subhannita1994/PandemicPedestrian/blob/master/sample%20map.png"></img>
 
 ## Prerequisites
-<ul>
-    <li>Composer</li>
-    <li>PHP 7</li>
-    <li>Python 3 and pip</li>
-    <li>Google Maps API key - https://developers.google.com/places/web-service/get-api-key</li>
-    <li>MySQL</li>
-</ul>
+
+    * Composer
+    * PHP 7
+    * Python 3 and pip
+    * Google Maps API key - https://developers.google.com/places/web-service/get-api-key
+    * MySQL
+
        
 ## Installation
 
 <ol>
-    <li>Install the popular_times library - `pip install --upgrade git+https://github.com/m-wrzr/populartimes`</li>
-    <li>Clone this repository - `git clone https://github.com/subhannita1994/PandemicPedestrian.git`</li>
-    <li>Run `composer install` and `npm insall` to install the dependencies</li>
-    <li>Generate an app encryption key - `php artisan key:generate`</li>
-    <li>Set up a MySQL database and edit the database variables accordingly in the `.env` file</li>
-    <li>Migrate the database by running `php artisan migrate:fresh`</li>
-    <li>Run the website - `php artisan serv`</li>
+    <li>Install the popular_times library - <code>pip install --upgrade git+https://github.com/m-wrzr/populartimes</code></li>
+    <li>Clone this repository - <code>git clone https://github.com/subhannita1994/PandemicPedestrian.git</code></li>
+    <li>Run <code>composer install</code> and <code>npm insall</code> to install the dependencies</li>
+    <li>Generate an app encryption key - <code>php artisan key:generate</code></li>
+    <li>Set up a MySQL database and edit the database variables accordingly in the <code>.env</code> file</li>
+    <li>Migrate the database by running <code>php artisan migrate:fresh</code></li>
+    <li>Run the website - <code>php artisan serv</code></li>
 </ol>
     
     
