@@ -8,13 +8,13 @@ You can set your source and destination addresses, select a day and time and see
 <img src="https://github.com/subhannita1994/PandemicPedestrian/blob/master/sample%20map.png"></img>
 
 ## Prerequisites
-
-    * Composer
-    * PHP 7
-    * Python 3 and pip
-    * Google Maps API key - https://developers.google.com/places/web-service/get-api-key
-    * MySQL
-
+<ul>
+    <li> Composer</li>
+    <li> PHP 7</li>
+    <li> Python 3 and pip</li>
+    <li> Google Maps API key - https://developers.google.com/places/web-service/get-api-key</li>
+    <li> MySQL</li>
+</ul>
        
 ## Installation
 
